@@ -1,0 +1,164 @@
+#ifdef COLOR
+!*customization: -color
+#endif
+
+XTerm*termName: xterm-256color
+URxvt*termName: rxvt-unicode-256color
+
+! # rxvt stuf bdd 2013-07-18- - - - - - - - - - - - - - - - - - - - -
+
+!Rxvt*transparent: false
+!Rxvt*background: black
+!Rxvt*foreground: wheat
+!Rxvt*cursorColor: orchid
+!Rxvt*font:-misc-fixed-medium-*-*-*-14-*-*-*-*-*-*-*
+!Rxvt*scrollBar: false
+!Rxvt*saveLines:20000
+!Rxvt*charClass:        33:48,37:48,45-47:48,58:48,64:48,126:48,63:48,61:48
+
+! # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+rxvt*transparent: false
+rxvt*scrollBar: false
+rxvt*cursorBlink: false
+rxvt*saveLines:20000
+
+!  #bdd 2012-02-10 15:42:10 - - - - - - - - - - - - - - - - - - - -
+Xcursor.theme: Oxygen_Blue
+
+!  #bdd 2010-01-27 13:14:59 - - - - - - - - - - - - - - - - - - - -
+
+*colorBDMode: on
+*colorULMode: on
+*colorBD: red
+*colorUL: green
+
+!  #bdd 2010-01-27 13:14:59 - - - - - - - - - - - - - - - - - - - -
+
+*VT100*background: black
+*VT100*foreground: wheat
+!*VT100*cursorColor: orchid
+
+! use this font for 1600x1200
+xterm*VT100*font:-misc-fixed-medium-*-*-*-14-*-*-*-*-*-*-*
+xterm*VT100.geometry:90x25
+xterm*background:black
+xterm*foreground:wheat
+!xterm*cursorColor:orchid
+xterm*fullCursor: true
+xterm*saveLines: 2000
+xterm*VT100.cutNewLine: true
+xterm*VT100.cutToBeginningOfLine: true
+!                   !     %     +     ,-./      :     @      ~     ?     =
+!xterm*charClass:   33:48,37:48,43:48,44-47:48,58:48,64:48,126:48,63:48,61:48
+! minus the comma
+! xterm*charClass:   33:48,37:48,45-47:48,58:48,64:48,126:48,63:48,61:48
+! added the plus
+xterm*charClass:   33:48,37:48,43:48,45-47:48,58:48,64:48,126:48,63:48,61:48
+
+VT100.Translations: #override\n\
+	<Key>BackSpace: string(0x7F)\n\
+	<Key>Delete: string("\033[3~")\n\
+	<Key>Home: string("\033[1~")\n\
+	<Key>End: string("\033[4~")
+    <KeyPress>Prior : scroll-back(1,page)\n\
+	<KeyPress>Next : scroll-forw(1,page)
+*ttyModes: erase ^? 
+
+!
+!xterm_color*reverseWrap: true
+xterm_color*VT100.Translations: #override\n\
+	<KeyPress>Prior : scroll-back(1,page)\n\
+	<KeyPress>Next : scroll-forw(1,page)
+
+!                        !     %    ,-./      :     @      ~     ?     =
+Vim*charClass:        33:48,37:48,44-47:48,58:48,64:48,126:48,63:48,61:48
+
+!BLK Cursor
+#define _color0        #000d18
+#define _color8        #000d18
+
+!RED Tag
+#define _color1        #e89393
+#define _color9        #e89393
+
+!GRN SpecialKey
+#define _color2        #9ece9e
+#define _color10       #9ece9e
+
+!YEL Keyword
+#define _color3        #f0dfaf
+#define _color11       #f0dfaf
+
+!BLU Number
+#define _color4        #8cd0d3
+#define _color12       #8cd0d3
+
+!MAG Precondit
+#define _color5        #c0bed1
+#define _color13       #c0bed1
+
+!CYN Float
+#define _color6        #dfaf8f
+#define _color14       #dfaf8f
+
+!WHT Search
+#define _color7        #efefef
+#define _color15       #efefef
+
+!FMT Include, StatusLine, ErrorMsg
+#define _colorBD       #ffcfaf
+#define _colorUL       #ccdc90
+#define _colorIT       #80d4aa
+
+!TXT Normal, Normal, Cursor
+#define _foreground    #dcdccc
+#define _background    #1f1f1f
+#define _cursorColor   #8faf9f
+
+URxvt*color0         : _color0
+URxvt*color1         : _color1
+URxvt*color2         : _color2
+URxvt*color3         : _color3
+URxvt*color4         : _color4
+URxvt*color5         : _color5
+URxvt*color6         : _color6
+URxvt*color7         : _color7
+URxvt*color8         : _color8
+URxvt*color9         : _color9
+URxvt*color10        : _color10
+URxvt*color11        : _color11
+URxvt*color12        : _color12
+URxvt*color13        : _color13
+URxvt*color14        : _color14
+URxvt*color15        : _color15
+URxvt*colorBD        : _colorBD
+URxvt*colorIT        : _colorIT
+URxvt*colorUL        : _colorUL
+URxvt*foreground     : _foreground
+URxvt*background     : _background
+URxvt*cursorColor    : _cursorColor
+XTerm*color0         : _color0
+XTerm*color1         : _color1
+XTerm*color2         : _color2
+XTerm*color3         : _color3
+XTerm*color4         : _color4
+XTerm*color5         : _color5
+XTerm*color6         : _color6
+XTerm*color7         : _color7
+XTerm*color8         : _color8
+XTerm*color9         : _color9
+XTerm*color10        : _color10
+XTerm*color11        : _color11
+XTerm*color12        : _color12
+XTerm*color13        : _color13
+XTerm*color14        : _color14
+XTerm*color15        : _color15
+XTerm*colorBD        : _colorBD
+XTerm*colorIT        : _colorIT
+XTerm*colorUL        : _colorUL
+XTerm*foreground     : _foreground
+XTerm*background     : _background
+XTerm*cursorColor    : _cursorColor
+
+!#end
