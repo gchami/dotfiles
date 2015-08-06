@@ -1,805 +1,658 @@
+"      _               _                 _  __
+"     | |__   __ _  __| | __      _____ | |/ _|
+"     | '_ \ / _` |/ _` | \ \ /\ / / _ \| | |_
+"     | |_) | (_| | (_| |  \ V  V / (_) | |  _|
+"     |_.__/ \__,_|\__,_|   \_/\_/ \___/|_|_|
 "
-" Derek Wyatt's Vim Configuration
+"      I am the Bad Wolf. I create myself.
+"       I take the words. I scatter them in time and space.
+"        A message to lead myself here.
 "
-" It's got stuff in it.
+" A Vim colorscheme pieced together by Steve Losh.
+" Available at http://stevelosh.com/projects/badwolf/
 "
+" Why? {{{
+"
+" After using Molokai for quite a long time, I started longing for
+" a replacement.
+"
+" I love Molokai's high contrast and gooey, saturated tones, but it can be
+" a little inconsistent at times.
+"
+" Also it's winter here in Rochester, so I wanted a color scheme that's a bit
+" warmer.  A little less blue and a bit more red.
+"
+" And so Bad Wolf was born.  I'm no designer, but designers have been scattering
+" beautiful colors through time and space long before I came along.  I took
+" advantage of that and reused some of my favorites to lead me to this scheme.
+"
+" }}}
 
+" Supporting code -------------------------------------------------------------
+" Preamble {{{
 
-"-----------------------------------------------------------------------------
-" Global Stuff
-"-----------------------------------------------------------------------------
+set number
 
-
-function! RunningInsideGit()
-  let result = system('env | grep ^GIT_')
-  if result == ""
-    return 0
-  else
-    return 1
-  endif
-endfunction
-
-" Get Vundle up and running
-set nocompatible
-filetype off 
-set runtimepath+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-Plugin 'gmarik/Vundle.vim'
-Plugin 'derekwyatt/ag.vim'
-Plugin 'bufkill.vim'
-Plugin 'MarcWeber/vim-addon-completion'
-Plugin 'kien/ctrlp.vim'
-Plugin 'DfrankUtil'
-Plugin 'EasyMotion'
-Plugin 'derekwyatt/vim-fswitch'
-Plugin 'tpope/vim-fugitive'
-Plugin 'endel/vim-github-colorscheme'
-Plugin 'vim-scripts/gnupg.vim'
-Plugin 'sjl/gundo.vim'
-"Plugin 'laurentgoudet/vim-howdoi'
-Plugin 'noahfrederick/vim-hemisu'
-Plugin 'nanotech/jellybeans.vim'
-Plugin 'elzr/vim-json'
-Plugin 'scrooloose/nerdtree'
-Plugin 'derekwyatt/vim-npl'
-Plugin 'derekwyatt/vim-protodef'
-Plugin 'derekwyatt/vim-sbt'
-Plugin 'derekwyatt/vim-scala'
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'tpope/vim-surround'
-Plugin 'godlygeek/tabular'
-Plugin 'vim-scripts/TwitVim'
-Plugin 'tpope/vim-unimpaired'
-Plugin 'vimprj'
-Plugin 'VisIncr'
-Plugin 'drmingdrmer/xptemplate'
-Plugin 'GEverding/vim-hocon'
-if !RunningInsideGit()
-  Plugin 'indexer.tar.gz'
-endif
-call vundle#end()
 filetype plugin indent on
-
-" Add xptemplate global personal directory value
-if has("unix")
-  set runtimepath+=~/.vim/xpt-personal
-endif
-
-
-" Set filetype stuff to on
-filetype on
-filetype plugin on
-filetype indent on
-
-" Tabstops are 4 spaces
-set tabstop=2
-set shiftwidth=2
-set softtabstop=2
+set tabstop=4
+set shiftwidth=4
 set expandtab
-" set autoindent
 
-" Printing options
-set printoptions=header:0,duplex:long,paper:letter
+syntax enable
 
-" set the search scan to wrap lines
-set wrapscan
-
-" I'm happy to type the case of things.  I tried the ignorecase, smartcase
-" thing but it just wasn't working out for me
-set ignorecase
-
-" set the forward slash to be the slash of note.  Backslashes suck
-set shellslash
-if has("unix")
-  set shell=bash
-else
-  set shell=ksh.exe
+if !has("gui_running") && &t_Co != 88 && &t_Co != 256
+    finish
 endif
 
-" Make command line two lines high
-set ch=2
+set background=dark
 
-" set visual bell -- i hate that damned beeping
-set vb
+if exists("syntax_on")
+    syntax reset
+endif
 
-" Allow backspacing over indent, eol, and the start of an insert
-set backspace=2
+let colors_name = "badwolf"
 
-" Make sure that unsaved buffers that are to be put in the background are 
-" allowed to go in there (ie. the "must save first" error doesn't come up)
-set hidden
+if !exists("g:badwolf_html_link_underline") " {{{
+    let g:badwolf_html_link_underline = 1
+endif " }}}
 
-" Make the 'cw' and like commands put a $ at the end instead of just deleting
-" the text and replacing it
-set cpoptions=ces$
+if !exists("g:badwolf_css_props_highlight") " {{{
+    let g:badwolf_css_props_highlight = 0
+endif " }}}
 
-function! DerekFugitiveStatusLine()
-  let status = fugitive#statusline()
-  let trimmed = substitute(status, '\[Git(\(.*\))\]', '\1', '')
-  let trimmed = substitute(trimmed, '\(\w\)\w\+\ze/', '\1', '')
-  let trimmed = substitute(trimmed, '/[^_]*\zs_.*', '', '')
-  if len(trimmed) == 0
-    return ""
-  else
-    return '(' . trimmed[0:10] . ')'
-  endif
+" }}}
+" Palette {{{
+
+let s:bwc = {}
+
+" The most basic of all our colors is a slightly tweaked version of the Molokai
+" Normal text.
+let s:bwc.plain = ['f8f6f2', 15]
+
+" Pure and simple.
+let s:bwc.snow = ['ffffff', 15]
+let s:bwc.coal = ['000000', 16]
+
+" All of the Gravel colors are based on a brown from Clouds Midnight.
+let s:bwc.brightgravel   = ['d9cec3', 252]
+let s:bwc.lightgravel    = ['998f84', 245]
+let s:bwc.gravel         = ['857f78', 243]
+let s:bwc.mediumgravel   = ['666462', 241]
+let s:bwc.deepgravel     = ['45413b', 238]
+let s:bwc.deepergravel   = ['35322d', 236]
+let s:bwc.darkgravel     = ['242321', 235]
+let s:bwc.blackgravel    = ['1c1b1a', 233]
+let s:bwc.blackestgravel = ['141413', 232]
+
+" A color sampled from a highlight in a photo of a glass of Dale's Pale Ale on
+" my desk.
+let s:bwc.dalespale = ['fade3e', 221]
+
+" A beautiful tan from Tomorrow Night.
+let s:bwc.dirtyblonde = ['f4cf86', 222]
+
+" Delicious, chewy red from Made of Code for the poppiest highlights.
+let s:bwc.taffy = ['ff2c4b', 196]
+
+" Another chewy accent, but use sparingly!
+let s:bwc.saltwatertaffy = ['8cffba', 121]
+
+" The star of the show comes straight from Made of Code.
+let s:bwc.tardis = ['0a9dff', 39]
+
+" This one's from Mustang, not Florida!
+let s:bwc.orange = ['ffa724', 214]
+
+" A limier green from Getafe.
+let s:bwc.lime = ['aeee00', 154]
+
+" Rose's dress in The Idiot's Lantern.
+let s:bwc.dress = ['ff9eb8', 211]
+
+" Another play on the brown from Clouds Midnight.  I love that color.
+let s:bwc.toffee = ['b88853', 137]
+
+" Also based on that Clouds Midnight brown.
+let s:bwc.coffee    = ['c7915b', 173]
+let s:bwc.darkroast = ['88633f', 95]
+
+" }}}
+" Highlighting Function {{{
+function! s:HL(group, fg, ...)
+    " Arguments: group, guifg, guibg, gui, guisp
+
+    let histring = 'hi ' . a:group . ' '
+
+    if strlen(a:fg)
+        if a:fg == 'fg'
+            let histring .= 'guifg=fg ctermfg=fg '
+        else
+            let c = get(s:bwc, a:fg)
+            let histring .= 'guifg=#' . c[0] . ' ctermfg=' . c[1] . ' '
+        endif
+    endif
+
+    if a:0 >= 1 && strlen(a:1)
+        if a:1 == 'bg'
+            let histring .= 'guibg=bg ctermbg=bg '
+        else
+            let c = get(s:bwc, a:1)
+            let histring .= 'guibg=#' . c[0] . ' ctermbg=' . c[1] . ' '
+        endif
+    endif
+
+    if a:0 >= 2 && strlen(a:2)
+        let histring .= 'gui=' . a:2 . ' cterm=' . a:2 . ' '
+    endif
+
+    if a:0 >= 3 && strlen(a:3)
+        let c = get(s:bwc, a:3)
+        let histring .= 'guisp=#' . c[0] . ' '
+    endif
+
+    " echom histring
+
+    execute histring
 endfunction
+" }}}
+" Configuration Options {{{
 
-" Set the status line the way i like it
-set stl=%f\ %m\ %r%{DerekFugitiveStatusLine()}\ Line:%l/%L[%p%%]\ Col:%v\ Buf:#%n\ [%b][0x%B]
+if exists('g:badwolf_darkgutter') && g:badwolf_darkgutter
+    let s:gutter = 'blackestgravel'
+else
+    let s:gutter = 'blackgravel'
+endif
 
-" tell VIM to always put a status line in, even if there is only one window
-set laststatus=1
+if exists('g:badwolf_tabline')
+    if g:badwolf_tabline == 0
+        let s:tabline = 'blackestgravel'
+    elseif  g:badwolf_tabline == 1
+        let s:tabline = 'blackgravel'
+    elseif  g:badwolf_tabline == 2
+        let s:tabline = 'darkgravel'
+    elseif  g:badwolf_tabline == 3
+        let s:tabline = 'deepgravel'
+    else
+        let s:tabline = 'blackestgravel'
+    endif
+else
+    let s:tabline = 'blackgravel'
+endif
 
-" Don't update the display while executing macros
-set lazyredraw
+" }}}
 
-" Don't show the current command in the lower right corner.  In OSX, if this is
-" set and lazyredraw is set then it's slow as molasses, so we unset this
-set showcmd
+" Actual colorscheme ----------------------------------------------------------
+" Vanilla Vim {{{
 
-" Show the current mode
-set showmode
+" General/UI {{{
 
-" Switch on syntax highlighting.
-syntax on
+call s:HL('Normal', 'plain', 'blackgravel')
 
-" Hide the mouse pointer while typing
-set mousehide
+call s:HL('Folded', 'mediumgravel', 'bg', 'none')
 
-" Set up the gui cursor to look nice
-set guicursor=n-v-c:block-Cursor-blinkon0,ve:ver35-Cursor,o:hor50-Cursor,i-ci:ver25-Cursor,r-cr:hor20-Cursor,sm:block-Cursor-blinkwait175-blinkoff150-blinkon175
+call s:HL('VertSplit', 'lightgravel', 'bg', 'none')
 
-" set the gui options the way I like
-set guioptions=acg
+call s:HL('CursorLine',   '', 'darkgravel', 'none')
+call s:HL('CursorColumn', '', 'darkgravel')
+call s:HL('ColorColumn',  '', 'darkgravel')
 
-" Setting this below makes it sow that error messages don't disappear after one second on startup.
-"set debug=msg
+call s:HL('TabLine', 'plain', s:tabline, 'none')
+call s:HL('TabLineFill', 'plain', s:tabline, 'none')
+call s:HL('TabLineSel', 'coal', 'tardis', 'none')
 
-" This is the timeout used while waiting for user input on a multi-keyed macro
-" or while just sitting and waiting for another key to be pressed measured
-" in milliseconds.
+call s:HL('MatchParen', 'dalespale', 'darkgravel', 'bold')
+
+call s:HL('NonText',    'deepgravel', 'bg')
+call s:HL('SpecialKey', 'deepgravel', 'bg')
+
+call s:HL('Visual',    '',  'deepgravel')
+call s:HL('VisualNOS', '',  'deepgravel')
+
+call s:HL('Search',    'coal', 'dalespale', 'bold')
+call s:HL('IncSearch', 'coal', 'tardis',    'bold')
+
+call s:HL('Underlined', 'fg', '', 'underline')
+
+call s:HL('StatusLine',   'coal', 'tardis',     'bold')
+call s:HL('StatusLineNC', 'snow', 'deepgravel', 'bold')
+
+call s:HL('Directory', 'dirtyblonde', '', 'bold')
+
+call s:HL('Title', 'lime')
+
+call s:HL('ErrorMsg',   'taffy',       'bg', 'bold')
+call s:HL('MoreMsg',    'dalespale',   '',   'bold')
+call s:HL('ModeMsg',    'dirtyblonde', '',   'bold')
+call s:HL('Question',   'dirtyblonde', '',   'bold')
+call s:HL('WarningMsg', 'dress',       '',   'bold')
+
+" This is a ctags tag, not an HTML one.  'Something you can use c-] on'.
+call s:HL('Tag', '', '', 'bold')
+
+" hi IndentGuides                  guibg=#373737
+" hi WildMenu        guifg=#66D9EF guibg=#000000
+
+" }}}
+" Gutter {{{
+
+call s:HL('LineNr',     'mediumgravel', s:gutter)
+call s:HL('SignColumn', '',             s:gutter)
+call s:HL('FoldColumn', 'mediumgravel', s:gutter)
+
+" }}}
+" Cursor {{{
+
+call s:HL('Cursor',  'coal', 'tardis', 'bold')
+call s:HL('vCursor', 'coal', 'tardis', 'bold')
+call s:HL('iCursor', 'coal', 'tardis', 'none')
+
+" }}}
+" Syntax highlighting {{{
+
+" Start with a simple base.
+call s:HL('Special', 'plain')
+
+" Comments are slightly brighter than folds, to make 'headers' easier to see.
+call s:HL('Comment',        'gravel')
+call s:HL('Todo',           'snow', 'bg', 'bold')
+call s:HL('SpecialComment', 'snow', 'bg', 'bold')
+
+" Strings are a nice, pale straw color.  Nothing too fancy.
+call s:HL('String', 'dirtyblonde')
+
+" Control flow stuff is taffy.
+call s:HL('Statement',   'taffy', '', 'bold')
+call s:HL('Keyword',     'taffy', '', 'bold')
+call s:HL('Conditional', 'taffy', '', 'bold')
+call s:HL('Operator',    'taffy', '', 'none')
+call s:HL('Label',       'taffy', '', 'none')
+call s:HL('Repeat',      'taffy', '', 'none')
+
+" Functions and variable declarations are orange, because plain looks weird.
+call s:HL('Identifier', 'orange', '', 'none')
+call s:HL('Function',   'orange', '', 'none')
+
+" Preprocessor stuff is lime, to make it pop.
 "
-" i.e. for the ",d" command, there is a "timeoutlen" wait period between the
-"      "," key and the "d" key.  If the "d" key isn't pressed before the
-"      timeout expires, one of two things happens: The "," command is executed
-"      if there is one (which there isn't) or the command aborts.
-set timeoutlen=700
+" This includes imports in any given language, because they should usually be
+" grouped together at the beginning of a file.  If they're in the middle of some
+" other code they should stand out, because something tricky is
+" probably going on.
+call s:HL('PreProc',   'lime', '', 'none')
+call s:HL('Macro',     'lime', '', 'none')
+call s:HL('Define',    'lime', '', 'none')
+call s:HL('PreCondit', 'lime', '', 'bold')
 
-" Keep some stuff in the history
-set history=100
+" Constants of all kinds are colored together.
+" I'm not really happy with the color yet...
+call s:HL('Constant',  'toffee', '', 'bold')
+call s:HL('Character', 'toffee', '', 'bold')
+call s:HL('Boolean',   'toffee', '', 'bold')
 
-" These commands open folds
-set foldopen=block,insert,jump,mark,percent,quickfix,search,tag,undo
-set foldmethod=marker
+call s:HL('Number', 'toffee', '', 'bold')
+call s:HL('Float',  'toffee', '', 'bold')
 
-" When the page starts to scroll, keep the cursor 8 lines from the top and 8
-" lines from the bottom
-set scrolloff=8
+" Not sure what 'special character in a constant' means, but let's make it pop.
+call s:HL('SpecialChar', 'dress', '', 'bold')
 
-" Allow the cursor to go in to "invalid" places
-set virtualedit=all
+call s:HL('Type', 'dress', '', 'none')
+call s:HL('StorageClass', 'taffy', '', 'none')
+call s:HL('Structure', 'taffy', '', 'none')
+call s:HL('Typedef', 'taffy', '', 'bold')
 
-" Disable encryption (:X)
-set key=
+" Make try/catch blocks stand out.
+call s:HL('Exception', 'lime', '', 'bold')
 
-" Make the command-line completion better
-set wildmenu
+" Misc
+call s:HL('Error',  'snow',   'taffy', 'bold')
+call s:HL('Debug',  'snow',   '',      'bold')
+call s:HL('Ignore', 'gravel', '',      '')
 
-" Same as default except that I remove the 'u' option
-set complete=.,w,b,t
+" }}}
+" Completion Menu {{{
 
-" When completing by tag, show the whole tag, not just the function name
-set showfulltag
+call s:HL('Pmenu', 'plain', 'deepergravel')
+call s:HL('PmenuSel', 'coal', 'tardis', 'bold')
+call s:HL('PmenuSbar', '', 'deepergravel')
+call s:HL('PmenuThumb', 'brightgravel')
 
-" Set the textwidth to be 80 chars
-set textwidth=80
+" }}}
+" Diffs {{{
 
-" get rid of the silly characters in separators
-set fillchars = ""
+call s:HL('DiffDelete', 'coal', 'coal')
+call s:HL('DiffAdd',    '',     'deepergravel')
+call s:HL('DiffChange', '',     'darkgravel')
+call s:HL('DiffText',   'snow', 'deepergravel', 'bold')
 
-" Add ignorance of whitespace to diff
-set diffopt+=iwhite
+" }}}
+" Spelling {{{
 
-" Enable search highlighting
-" set hlsearch
+if has("spell")
+    call s:HL('SpellCap', 'dalespale', 'bg', 'undercurl,bold', 'dalespale')
+    call s:HL('SpellBad', '', 'bg', 'undercurl', 'dalespale')
+    call s:HL('SpellLocal', '', '', 'undercurl', 'dalespale')
+    call s:HL('SpellRare', '', '', 'undercurl', 'dalespale')
+endif
 
-" Incrementally match the search
-set incsearch
+" }}}
 
-" Add the unnamed register to the clipboard
-set clipboard+=unnamed
+" }}}
+" Plugins {{{
 
-" Automatically read a file that has changed on disk
-set autoread
+" CtrlP {{{
 
-set grepprg=grep\ -nH\ $*
+    " the message when no match is found
+    call s:HL('CtrlPNoEntries', 'snow', 'taffy', 'bold')
 
-" Trying out the line numbering thing... never liked it, but that doesn't mean
-" I shouldn't give it another go :)
-" set relativenumber
+    " the matched pattern
+    call s:HL('CtrlPMatch', 'orange', 'bg', 'none')
 
-" Types of files to ignore when autocompleting things
-set wildignore+=*.o,*.class,*.git,*.svn
+    " the line prefix '>' in the match window
+    call s:HL('CtrlPLinePre', 'deepgravel', 'bg', 'none')
 
-" Various characters are "wider" than normal fixed width characters, but the
-" default setting of ambiwidth (single) squeezes them into "normal" width, which
-" sucks.  Setting it to double makes it awesome.
-set ambiwidth=double
+    " the prompt’s base
+    call s:HL('CtrlPPrtBase', 'deepgravel', 'bg', 'none')
 
-" OK, so I'm gonna remove the VIM safety net for a while and see if kicks my ass
-set nobackup
-set nowritebackup
-set noswapfile
+    " the prompt’s text
+    call s:HL('CtrlPPrtText', 'plain', 'bg', 'none')
 
-" dictionary for english words
-" I don't actually use this much at all and it makes my life difficult in general
-"set dictionary=$VIM/words.txt
+    " the prompt’s cursor when moving over the text
+    call s:HL('CtrlPPrtCursor', 'coal', 'tardis', 'bold')
 
-" Let the syntax highlighting for Java files allow cpp keywords
-let java_allow_cpp_keywords = 1
+    " 'prt' or 'win', also for 'regex'
+    call s:HL('CtrlPMode1', 'coal', 'tardis', 'bold')
 
-" I don't want to have the default keymappings for my scala plugin evaluated
-let g:scala_use_default_keymappings = 0
+    " 'file' or 'path', also for the local working dir
+    call s:HL('CtrlPMode2', 'coal', 'tardis', 'bold')
 
-" System default for mappings is now the "," character
-let mapleader = ","
+    " the scanning status
+    call s:HL('CtrlPStats', 'coal', 'tardis', 'bold')
 
-" Wipe out all buffers
-nmap <silent> ,wa :1,9000bwipeout<cr>
+    " TODO: CtrlP extensions.
+    " CtrlPTabExtra  : the part of each line that’s not matched against (Comment)
+    " CtrlPqfLineCol : the line and column numbers in quickfix mode (|s:HL-Search|)
+    " CtrlPUndoT     : the elapsed time in undo mode (|s:HL-Directory|)
+    " CtrlPUndoBr    : the square brackets [] in undo mode (Comment)
+    " CtrlPUndoNr    : the undo number inside [] in undo mode (String)
 
-" Toggle paste mode
-nmap <silent> ,p :set invpaste<CR>:set paste?<CR>
+" }}}
+" EasyMotion {{{
 
-" cd to the directory containing the file in the buffer
-nmap <silent> ,cd :lcd %:h<CR>
-nmap <silent> ,cr :lcd <c-r>=FindGitDirOrRoot()<cr><cr>
-nmap <silent> ,md :!mkdir -p %:p:h<CR>
+call s:HL('EasyMotionTarget', 'tardis',     'bg', 'bold')
+call s:HL('EasyMotionShade',  'deepgravel', 'bg')
 
-" Turn off that stupid highlight search
-nmap <silent> ,n :nohls<CR>
+" }}}
+" Interesting Words {{{
 
-" put the vim directives for my file editing settings in
-nmap <silent> ,vi ovim:set ts=2 sts=2 sw=2:<CR>vim600:fdm=marker fdl=1 fdc=0:<ESC>
+" These are only used if you're me or have copied the <leader>hNUM mappings
+" from my Vimrc.
+call s:HL('InterestingWord1', 'coal', 'orange')
+call s:HL('InterestingWord2', 'coal', 'lime')
+call s:HL('InterestingWord3', 'coal', 'saltwatertaffy')
+call s:HL('InterestingWord4', 'coal', 'toffee')
+call s:HL('InterestingWord5', 'coal', 'dress')
+call s:HL('InterestingWord6', 'coal', 'taffy')
 
-" The following beast is something i didn't write... it will return the 
-" syntax highlighting group that the current "thing" under the cursor
-" belongs to -- very useful for figuring out what to change as far as 
-" syntax highlighting goes.
-nmap <silent> ,qq :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
-" Make shift-insert work like in Xterm
-map <S-Insert> <MiddleMouse>
-map! <S-Insert> <MiddleMouse>
+" }}}
+" Makegreen {{{
 
-" set text wrapping toggles
-nmap <silent> ,ww :set invwrap<cr>
-nmap <silent> ,wW :windo set invwrap<cr>
+" hi GreenBar term=reverse ctermfg=white ctermbg=green guifg=coal guibg=#9edf1c
+" hi RedBar   term=reverse ctermfg=white ctermbg=red guifg=white guibg=#C50048
 
-" allow command line editing like emacs
-cnoremap <C-A>      <Home>
-cnoremap <C-B>      <Left>
-cnoremap <C-E>      <End>
-cnoremap <C-F>      <Right>
-" cnoremap <C-N>      <End>
-" cnoremap <C-P>      <Up>
-cnoremap <ESC>b     <S-Left>
-cnoremap <ESC><C-B> <S-Left>
-cnoremap <ESC>f     <S-Right>
-cnoremap <ESC><C-F> <S-Right>
-cnoremap <ESC><C-H> <C-W>
+" }}}
+" Rainbow Parentheses {{{
 
-" Maps to make handling windows a bit easier
-"noremap <silent> ,h :wincmd h<CR>
-"noremap <silent> ,j :wincmd j<CR>
-"noremap <silent> ,k :wincmd k<CR>
-"noremap <silent> ,l :wincmd l<CR>
-"noremap <silent> ,sb :wincmd p<CR>
-noremap <silent> <C-F9>  :vertical resize -10<CR>
-noremap <silent> <C-F10> :resize +10<CR>
-noremap <silent> <C-F11> :resize -10<CR>
-noremap <silent> <C-F12> :vertical resize +10<CR>
-noremap <silent> ,s8 :vertical resize 83<CR>
-noremap <silent> ,cj :wincmd j<CR>:close<CR>
-noremap <silent> ,ck :wincmd k<CR>:close<CR>
-noremap <silent> ,ch :wincmd h<CR>:close<CR>
-noremap <silent> ,cl :wincmd l<CR>:close<CR>
-noremap <silent> ,cc :close<CR>
-noremap <silent> ,cw :cclose<CR>
-noremap <silent> ,ml <C-W>L
-noremap <silent> ,mk <C-W>K
-noremap <silent> ,mh <C-W>H
-noremap <silent> ,mj <C-W>J
-noremap <silent> <C-7> <C-W>>
-noremap <silent> <C-8> <C-W>+
-noremap <silent> <C-9> <C-W>+
-noremap <silent> <C-0> <C-W>>
+call s:HL('level16c', 'mediumgravel',   '', 'bold')
+call s:HL('level15c', 'dalespale',      '', '')
+call s:HL('level14c', 'dress',          '', '')
+call s:HL('level13c', 'orange',         '', '')
+call s:HL('level12c', 'tardis',         '', '')
+call s:HL('level11c', 'lime',           '', '')
+call s:HL('level10c', 'toffee',         '', '')
+call s:HL('level9c',  'saltwatertaffy', '', '')
+call s:HL('level8c',  'coffee',         '', '')
+call s:HL('level7c',  'dalespale',      '', '')
+call s:HL('level6c',  'dress',          '', '')
+call s:HL('level5c',  'orange',         '', '')
+call s:HL('level4c',  'tardis',         '', '')
+call s:HL('level3c',  'lime',           '', '')
+call s:HL('level2c',  'toffee',         '', '')
+call s:HL('level1c',  'saltwatertaffy', '', '')
 
-" Edit the vimrc file
-nmap <silent> ,ev :e $MYVIMRC<CR>
-nmap <silent> ,sv :so $MYVIMRC<CR>
+" }}}
+" ShowMarks {{{
 
-" Make horizontal scrolling easier
-nmap <silent> <C-o> 10zl
-nmap <silent> <C-i> 10zh
+call s:HL('ShowMarksHLl', 'tardis', 'blackgravel')
+call s:HL('ShowMarksHLu', 'tardis', 'blackgravel')
+call s:HL('ShowMarksHLo', 'tardis', 'blackgravel')
+call s:HL('ShowMarksHLm', 'tardis', 'blackgravel')
 
-" Add a GUID to the current line
-imap <C-J>d <C-r>=substitute(system("uuidgen"), '.$', '', 'g')<CR>
+" }}}
 
-" Toggle fullscreen mode
-nmap <silent> <F3> :call libcallnr("gvimfullscreen.dll", "ToggleFullScreen", 0)<CR>
+" }}}
+" Filetype-specific {{{
 
-" Underline the current line with '='
-nmap <silent> ,u= :t.\|s/./=/g\|:nohls<cr>
-nmap <silent> ,u- :t.\|s/./-/g\|:nohls<cr>
-nmap <silent> ,u~ :t.\|s/./\\~/g\|:nohls<cr>
+" Clojure {{{
 
-" Shrink the current window to fit the number of lines in the buffer.  Useful
-" for those buffers that are only a few lines
-nmap <silent> ,sw :execute ":resize " . line('$')<cr>
+call s:HL('clojureSpecial',  'taffy', '', '')
+call s:HL('clojureDefn',     'taffy', '', '')
+call s:HL('clojureDefMacro', 'taffy', '', '')
+call s:HL('clojureDefine',   'taffy', '', '')
+call s:HL('clojureMacro',    'taffy', '', '')
+call s:HL('clojureCond',     'taffy', '', '')
 
-" Use the bufkill plugin to eliminate a buffer but keep the window layout
-nmap ,bd :BD<cr>
+call s:HL('clojureKeyword', 'orange', '', 'none')
 
-" Use CTRL-E to replace the original ',' mapping
-nnoremap <C-E> ,
+call s:HL('clojureFunc',   'dress', '', 'none')
+call s:HL('clojureRepeat', 'dress', '', 'none')
 
-" Alright... let's try this out
-imap jj <esc>
-cmap jj <esc>
+call s:HL('clojureParen0', 'lightgravel', '', 'none')
 
-" I like jj - Let's try something else fun
-imap ,fn <c-r>=expand('%:t:r')<cr>
+call s:HL('clojureAnonArg', 'snow', '', 'bold')
 
-" Clear the text using a motion / text object and then move the character to the
-" next word
-nmap <silent> ,C :set opfunc=ClearText<CR>g@
-vmap <silent> ,C :<C-U>call ClearText(visual(), 1)<CR>
+" }}}
+" CSS {{{
 
-" Make the current file executable
-nmap ,x :w<cr>:!chmod 755 %<cr>:e<cr>
-
-" Digraphs
-" Alpha
-imap <c-l><c-a> <c-k>a*
-" Beta
-imap <c-l><c-b> <c-k>b*
-" Gamma
-imap <c-l><c-g> <c-k>g*
-" Delta
-imap <c-l><c-d> <c-k>d*
-" Epslion
-imap <c-l><c-e> <c-k>e*
-" Lambda
-imap <c-l><c-l> <c-k>l*
-" Eta
-imap <c-l><c-y> <c-k>y*
-" Theta
-imap <c-l><c-h> <c-k>h*
-" Mu
-imap <c-l><c-m> <c-k>m*
-" Rho
-imap <c-l><c-r> <c-k>r*
-" Pi
-imap <c-l><c-p> <c-k>p*
-" Phi
-imap <c-l><c-f> <c-k>f*
-
-function! ClearText(type, ...)
-	let sel_save = &selection
-	let &selection = "inclusive"
-	let reg_save = @@
-	if a:0 " Invoked from Visual mode, use '< and '> marks
-		silent exe "normal! '<" . a:type . "'>r w"
-	elseif a:type == 'line'
-		silent exe "normal! '[V']r w"
-	elseif a:type == 'line'
-		silent exe "normal! '[V']r w"
-    elseif a:type == 'block'
-      silent exe "normal! `[\<C-V>`]r w"
-    else
-      silent exe "normal! `[v`]r w"
-    endif
-    let &selection = sel_save
-    let @@ = reg_save
-endfunction
-
-" Syntax coloring lines that are too long just slows down the world
-set synmaxcol=2048
-
-" I don't like it when the matching parens are automatically highlighted
-let loaded_matchparen = 1
-
-" Highlight the current line and column
-" Don't do this - It makes window redraws painfully slow
-set nocursorline
-set nocursorcolumn
-
-if has("mac")
-  let g:main_font = "Anonymous\\ Pro:h11"
-  let g:small_font = "Anonymous\\ Pro:h2"
+if g:badwolf_css_props_highlight
+    call s:HL('cssColorProp', 'dirtyblonde', '', 'none')
+    call s:HL('cssBoxProp', 'dirtyblonde', '', 'none')
+    call s:HL('cssTextProp', 'dirtyblonde', '', 'none')
+    call s:HL('cssRenderProp', 'dirtyblonde', '', 'none')
+    call s:HL('cssGeneratedContentProp', 'dirtyblonde', '', 'none')
 else
-  let g:main_font = "DejaVu\\ Sans\\ Mono\\ 9"
-  let g:small_font = "DejaVu\\ Sans\\ Mono\\ 2"
+    call s:HL('cssColorProp', 'fg', '', 'none')
+    call s:HL('cssBoxProp', 'fg', '', 'none')
+    call s:HL('cssTextProp', 'fg', '', 'none')
+    call s:HL('cssRenderProp', 'fg', '', 'none')
+    call s:HL('cssGeneratedContentProp', 'fg', '', 'none')
+end
+
+call s:HL('cssValueLength', 'toffee', '', 'bold')
+call s:HL('cssColor', 'toffee', '', 'bold')
+call s:HL('cssBraces', 'lightgravel', '', 'none')
+call s:HL('cssIdentifier', 'orange', '', 'bold')
+call s:HL('cssClassName', 'orange', '', 'none')
+
+" }}}
+" Diff {{{
+
+call s:HL('gitDiff', 'lightgravel', '',)
+
+call s:HL('diffRemoved', 'dress', '',)
+call s:HL('diffAdded', 'lime', '',)
+call s:HL('diffFile', 'coal', 'taffy', 'bold')
+call s:HL('diffNewFile', 'coal', 'taffy', 'bold')
+
+call s:HL('diffLine', 'coal', 'orange', 'bold')
+call s:HL('diffSubname', 'orange', '', 'none')
+
+" }}}
+" Django Templates {{{
+
+call s:HL('djangoArgument', 'dirtyblonde', '',)
+call s:HL('djangoTagBlock', 'orange', '')
+call s:HL('djangoVarBlock', 'orange', '')
+" hi djangoStatement guifg=#ff3853 gui=bold
+" hi djangoVarBlock guifg=#f4cf86
+
+" }}}
+" HTML {{{
+
+" Punctuation
+call s:HL('htmlTag',    'darkroast', 'bg', 'none')
+call s:HL('htmlEndTag', 'darkroast', 'bg', 'none')
+
+" Tag names
+call s:HL('htmlTagName',        'coffee', '', 'bold')
+call s:HL('htmlSpecialTagName', 'coffee', '', 'bold')
+call s:HL('htmlSpecialChar',    'lime',   '', 'none')
+
+" Attributes
+call s:HL('htmlArg', 'coffee', '', 'none')
+
+" Stuff inside an <a> tag
+
+if g:badwolf_html_link_underline
+    call s:HL('htmlLink', 'lightgravel', '', 'underline')
+else
+    call s:HL('htmlLink', 'lightgravel', '', 'none')
 endif
 
-"-----------------------------------------------------------------------------
-" Fugitive
-"-----------------------------------------------------------------------------
-" Thanks to Drew Neil
-autocmd User fugitive
-  \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
-  \  noremap <buffer> .. :edit %:h<cr> |
-  \ endif
-autocmd BufReadPost fugitive://* set bufhidden=delete
+" }}}
+" Java {{{
 
-nmap ,gs :Gstatus<cr>
-nmap ,ge :Gedit<cr>
-nmap ,gw :Gwrite<cr>
-nmap ,gr :Gread<cr>
+call s:HL('javaClassDecl', 'taffy', '', 'bold')
+call s:HL('javaScopeDecl', 'taffy', '', 'bold')
+call s:HL('javaCommentTitle', 'gravel', '')
+call s:HL('javaDocTags', 'snow', '', 'none')
+call s:HL('javaDocParam', 'dalespale', '', '')
 
-"-----------------------------------------------------------------------------
-" NERD Tree Plugin Settings
-"-----------------------------------------------------------------------------
-" Toggle the NERD Tree on an off with F7
-nmap <F7> :NERDTreeToggle<CR>
+" }}}
+" LaTeX {{{
 
-" Close the NERD Tree with Shift-F7
-nmap <S-F7> :NERDTreeClose<CR>
+call s:HL('texStatement', 'tardis', '', 'none')
+call s:HL('texMathZoneX', 'orange', '', 'none')
+call s:HL('texMathZoneA', 'orange', '', 'none')
+call s:HL('texMathZoneB', 'orange', '', 'none')
+call s:HL('texMathZoneC', 'orange', '', 'none')
+call s:HL('texMathZoneD', 'orange', '', 'none')
+call s:HL('texMathZoneE', 'orange', '', 'none')
+call s:HL('texMathZoneV', 'orange', '', 'none')
+call s:HL('texMathZoneX', 'orange', '', 'none')
+call s:HL('texMath', 'orange', '', 'none')
+call s:HL('texMathMatcher', 'orange', '', 'none')
+call s:HL('texRefLabel', 'dirtyblonde', '', 'none')
+call s:HL('texRefZone', 'lime', '', 'none')
+call s:HL('texComment', 'darkroast', '', 'none')
+call s:HL('texDelimiter', 'orange', '', 'none')
+call s:HL('texZone', 'brightgravel', '', 'none')
 
-" Show the bookmarks table on startup
-let NERDTreeShowBookmarks=1
-
-" Don't display these kinds of files
-let NERDTreeIgnore=[ '\.ncb$', '\.suo$', '\.vcproj\.RIMNET', '\.obj$',
-                   \ '\.ilk$', '^BuildLog.htm$', '\.pdb$', '\.idb$',
-                   \ '\.embed\.manifest$', '\.embed\.manifest.res$',
-                   \ '\.intermediate\.manifest$', '^mt.dep$' ]
-
-"-----------------------------------------------------------------------------
-" GPG Stuff
-"-----------------------------------------------------------------------------
-if has("mac")
-    let g:GPGExecutable = "gpg2"
-    let g:GPGUseAgent = 0
-endif
-
-"-----------------------------------------------------------------------------
-" AG (SilverSearcher) Settings
-"-----------------------------------------------------------------------------
-nmap ,sf :AgForCurrentFileDir 
-nmap ,sr :AgForProjectRoot 
-nmap ,se :AgForExtension 
-let g:ag_results_mapping_replacements = {
-\   'open_and_close': '<cr>',
-\   'open': 'o',
-\ }
-
-"-----------------------------------------------------------------------------
-" FSwitch mappings
-"-----------------------------------------------------------------------------
-nmap <silent> ,of :FSHere<CR>
-nmap <silent> ,ol :FSRight<CR>
-nmap <silent> ,oL :FSSplitRight<CR>
-nmap <silent> ,oh :FSLeft<CR>
-nmap <silent> ,oH :FSSplitLeft<CR>
-nmap <silent> ,ok :FSAbove<CR>
-nmap <silent> ,oK :FSSplitAbove<CR>
-nmap <silent> ,oj :FSBelow<CR>
-nmap <silent> ,oJ :FSSplitBelow<CR>
-
-"-----------------------------------------------------------------------------
-" XPTemplate settings
-"-----------------------------------------------------------------------------
-let g:xptemplate_brace_complete = ''
-
-"-----------------------------------------------------------------------------
-" TwitVim settings
-"-----------------------------------------------------------------------------
-let twitvim_enable_perl = 1
-let twitvim_browser_cmd = 'firefox'
-nmap ,tw :FriendsTwitter<cr>
-nmap ,tm :UserTwitter<cr>
-nmap ,tM :MentionsTwitter<cr>
-function! TwitVimMappings()
-    nmap <buffer> U :exe ":UnfollowTwitter " . expand("<cword>")<cr>
-    nmap <buffer> F :exe ":FollowTwitter " . expand("<cword>")<cr>
-    nmap <buffer> 7 :BackTwitter<cr>
-    nmap <buffer> 8 :ForwardTwitter<cr>
-    nmap <buffer> 1 :PreviousTwitter<cr>
-    nmap <buffer> 2 :NextTwitter<cr>
-endfunction
-augroup derek_twitvim
+augroup badwolf_tex
     au!
-    au FileType twitvim call TwitVimMappings()
+
+    au BufRead,BufNewFile *.tex syn region texMathZoneV start="\\(" end="\\)\|%stopzone\>" keepend contains=@texMathZoneGroup
+    au BufRead,BufNewFile *.tex syn region texMathZoneX start="\$" skip="\\\\\|\\\$" end="\$\|%stopzone\>" keepend contains=@texMathZoneGroup
 augroup END
 
-"-----------------------------------------------------------------------------
-" VimSokoban settings
-"-----------------------------------------------------------------------------
-" Sokoban stuff
-let g:SokobanLevelDirectory = "/home/dwyatt/.vim/bundle/vim-sokoban/VimSokoban/"
+" }}}
+" LessCSS {{{
 
-"-----------------------------------------------------------------------------
-" FuzzyFinder Settings
-"-----------------------------------------------------------------------------
-let g:fuf_splitPathMatching = 1
-let g:fuf_maxMenuWidth = 110
-let g:fuf_timeFormat = ''
-nmap <silent> ,fv :FufFile ~/.vim/<cr>
-nmap <silent> ,fc :FufMruCmd<cr>
-nmap <silent> ,fm :FufMruFile<cr>
+call s:HL('lessVariable', 'lime', '', 'none')
 
-let g:CommandTMatchWindowAtTop = 1
-let g:make_scala_fuf_mappings = 0
+" }}}
+" Lispyscript {{{
 
-"-----------------------------------------------------------------------------
-" CtrlP Settings
-"-----------------------------------------------------------------------------
-let g:ctrlp_switch_buffer = 'E'
-let g:ctrlp_tabpage_position = 'c'
-let g:ctrlp_working_path_mode = 'rc'
-let g:ctrlp_root_markers = ['.project.root']
-let g:ctrlp_custom_ignore = '\v%(/\.%(git|hg|svn)|\.%(class|o|png|jpg|jpeg|bmp|tar|jar|tgz|deb|zip)$|/target/%(quickfix|resolution-cache|streams)|/target/scala-2.10/%(classes|test-classes|sbt-0.13|cache)|/project/target|/project/project)'
-let g:ctrlp_open_new_file = 'r'
-let g:ctrlp_open_multiple_files = '1ri'
-let g:ctrlp_match_window = 'max:40'
-let g:ctrlp_prompt_mappings = {
-  \ 'PrtSelectMove("j")':   ['<c-n>'],
-  \ 'PrtSelectMove("k")':   ['<c-p>'],
-  \ 'PrtHistory(-1)':       ['<c-j>', '<down>'],
-  \ 'PrtHistory(1)':        ['<c-i>', '<up>']
-\ }
-nmap ,fb :CtrlPBuffer<cr>
-nmap ,ff :CtrlP .<cr>
-nmap ,fF :execute ":CtrlP " . expand('%:p:h')<cr>
-nmap ,fr :CtrlP<cr>
-nmap ,fm :CtrlPMixed<cr>
+call s:HL('lispyscriptDefMacro', 'lime', '', '')
+call s:HL('lispyscriptRepeat', 'dress', '', 'none')
 
-"-----------------------------------------------------------------------------
-" Gundo Settings
-"-----------------------------------------------------------------------------
-nmap <c-F5> :GundoToggle<cr>
+" }}}
+" Mail {{{
 
-"-----------------------------------------------------------------------------
-" Conque Settings
-"-----------------------------------------------------------------------------
-let g:ConqueTerm_FastMode = 1
-let g:ConqueTerm_ReadUnfocused = 1
-let g:ConqueTerm_InsertOnEnter = 1
-let g:ConqueTerm_PromptRegex = '^-->'
-let g:ConqueTerm_TERM = 'xterm'
+call s:HL('mailSubject', 'orange', '', 'bold')
+call s:HL('mailHeader', 'lightgravel', '', '')
+call s:HL('mailHeaderKey', 'lightgravel', '', '')
+call s:HL('mailHeaderEmail', 'snow', '', '')
+call s:HL('mailURL', 'toffee', '', 'underline')
+call s:HL('mailSignature', 'gravel', '', 'none')
 
-"-----------------------------------------------------------------------------
-" Functions
-"-----------------------------------------------------------------------------
-if !exists('g:bufferJumpList')
-  let g:bufferJumpList = {}
-endif
+call s:HL('mailQuoted1', 'gravel', '', 'none')
+call s:HL('mailQuoted2', 'dress', '', 'none')
+call s:HL('mailQuoted3', 'dirtyblonde', '', 'none')
+call s:HL('mailQuoted4', 'orange', '', 'none')
+call s:HL('mailQuoted5', 'lime', '', 'none')
 
-function! MarkBufferInJumpList(bufstr, letter)
-  let g:bufferJumpList[a:letter] = a:bufstr
-endfunction
+" }}}
+" Markdown {{{
 
-function! JumpToBufferInJumpList(letter)
-  if has_key(g:bufferJumpList, a:letter)
-    exe ":buffer " . g:bufferJumpList[a:letter]
-  else
-    echoerr a:letter . " isn't mapped to any existing buffer"
-  endif
-endfunction
+call s:HL('markdownHeadingRule', 'lightgravel', '', 'bold')
+call s:HL('markdownHeadingDelimiter', 'lightgravel', '', 'bold')
+call s:HL('markdownOrderedListMarker', 'lightgravel', '', 'bold')
+call s:HL('markdownListMarker', 'lightgravel', '', 'bold')
+call s:HL('markdownItalic', 'snow', '', 'bold')
+call s:HL('markdownBold', 'snow', '', 'bold')
+call s:HL('markdownH1', 'orange', '', 'bold')
+call s:HL('markdownH2', 'lime', '', 'bold')
+call s:HL('markdownH3', 'lime', '', 'none')
+call s:HL('markdownH4', 'lime', '', 'none')
+call s:HL('markdownH5', 'lime', '', 'none')
+call s:HL('markdownH6', 'lime', '', 'none')
+call s:HL('markdownLinkText', 'toffee', '', 'underline')
+call s:HL('markdownIdDeclaration', 'toffee')
+call s:HL('markdownAutomaticLink', 'toffee', '', 'bold')
+call s:HL('markdownUrl', 'toffee', '', 'bold')
+call s:HL('markdownUrldelimiter', 'lightgravel', '', 'bold')
+call s:HL('markdownLinkDelimiter', 'lightgravel', '', 'bold')
+call s:HL('markdownLinkTextDelimiter', 'lightgravel', '', 'bold')
+call s:HL('markdownCodeDelimiter', 'dirtyblonde', '', 'bold')
+call s:HL('markdownCode', 'dirtyblonde', '', 'none')
+call s:HL('markdownCodeBlock', 'dirtyblonde', '', 'none')
 
-function! ListJumpToBuffers()
-  for key in keys(g:bufferJumpList)
-    echo key . " = " . g:bufferJumpList[key]
-  endfor
-endfunction
+" }}}
+" MySQL {{{
 
-function! IndentToNextBraceInLineAbove()
-  :normal 0wk
-  :normal "vyf(
-  let @v = substitute(@v, '.', ' ', 'g')
-  :normal j"vPl
-endfunction
+call s:HL('mysqlSpecial', 'dress', '', 'bold')
 
-function! FindGitDirOrRoot()
-  let curdir = expand('%:p:h')
-  let gitdir = finddir('.git', curdir . ';')
-  if gitdir != ''
-    return substitute(gitdir, '\/\.git$', '', '')
-  else
-    return '/'
-  endif
-endfunction
+" }}}
+" Python {{{
 
-nmap <silent> ,ii :call IndentToNextBraceInLineAbove()<cr>
+hi def link pythonOperator Operator
+call s:HL('pythonBuiltin',     'dress')
+call s:HL('pythonBuiltinObj',  'dress')
+call s:HL('pythonBuiltinFunc', 'dress')
+call s:HL('pythonEscape',      'dress')
+call s:HL('pythonException',   'lime', '', 'bold')
+call s:HL('pythonExceptions',  'lime', '', 'none')
+call s:HL('pythonPrecondit',   'lime', '', 'none')
+call s:HL('pythonDecorator',   'taffy', '', 'none')
+call s:HL('pythonRun',         'gravel', '', 'bold')
+call s:HL('pythonCoding',      'gravel', '', 'bold')
 
-nmap <silent> ,mba :call MarkBufferInJumpList(expand('%:p'), 'a')<cr>
-nmap <silent> ,mbb :call MarkBufferInJumpList(expand('%:p'), 'b')<cr>
-nmap <silent> ,mbc :call MarkBufferInJumpList(expand('%:p'), 'c')<cr>
-nmap <silent> ,mbd :call MarkBufferInJumpList(expand('%:p'), 'd')<cr>
-nmap <silent> ,mbe :call MarkBufferInJumpList(expand('%:p'), 'e')<cr>
-nmap <silent> ,mbf :call MarkBufferInJumpList(expand('%:p'), 'f')<cr>
-nmap <silent> ,mbg :call MarkBufferInJumpList(expand('%:p'), 'g')<cr>
-nmap <silent> ,jba :call JumpToBufferInJumpList('a')<cr>
-nmap <silent> ,jbb :call JumpToBufferInJumpList('b')<cr>
-nmap <silent> ,jbc :call JumpToBufferInJumpList('c')<cr>
-nmap <silent> ,jbd :call JumpToBufferInJumpList('d')<cr>
-nmap <silent> ,jbe :call JumpToBufferInJumpList('e')<cr>
-nmap <silent> ,jbf :call JumpToBufferInJumpList('f')<cr>
-nmap <silent> ,jbg :call JumpToBufferInJumpList('g')<cr>
-nmap <silent> ,ljb :call ListJumpToBuffers()<cr>
+" }}}
+" SLIMV {{{
 
-function! DiffCurrentFileAgainstAnother(snipoff, replacewith)
-  let currentFile = expand('%:p')
-  let otherfile = substitute(currentFile, "^" . a:snipoff, a:replacewith, '')
-  only
-  execute "vertical diffsplit " . otherfile
-endfunction
+" Rainbow parentheses
+call s:HL('hlLevel0', 'gravel')
+call s:HL('hlLevel1', 'orange')
+call s:HL('hlLevel2', 'saltwatertaffy')
+call s:HL('hlLevel3', 'dress')
+call s:HL('hlLevel4', 'coffee')
+call s:HL('hlLevel5', 'dirtyblonde')
+call s:HL('hlLevel6', 'orange')
+call s:HL('hlLevel7', 'saltwatertaffy')
+call s:HL('hlLevel8', 'dress')
+call s:HL('hlLevel9', 'coffee')
 
-command! -nargs=+ DiffCurrent call DiffCurrentFileAgainstAnother(<f-args>)
+" }}}
+" Vim {{{
 
-function! RunSystemCall(systemcall)
-  let output = system(a:systemcall)
-  let output = substitute(output, "\n", '', 'g')
-  return output
-endfunction
+call s:HL('VimCommentTitle', 'lightgravel', '', 'bold')
 
-function! HighlightAllOfWord(onoff)
-  if a:onoff == 1
-    :augroup highlight_all
-    :au!
-    :au CursorMoved * silent! exe printf('match Search /\<%s\>/', expand('<cword>'))
-    :augroup END
-  else
-    :au! highlight_all
-    match none /\<%s\>/
-  endif
-endfunction
+call s:HL('VimMapMod',    'dress', '', 'none')
+call s:HL('VimMapModKey', 'dress', '', 'none')
+call s:HL('VimNotation', 'dress', '', 'none')
+call s:HL('VimBracket', 'dress', '', 'none')
 
-:nmap ,ha :call HighlightAllOfWord(1)<cr>
-:nmap ,hA :call HighlightAllOfWord(0)<cr>
+" }}}
 
-function! LengthenCWD()
-  let cwd = getcwd()
-  if cwd == '/'
-    return
-  endif
-  let lengthend = substitute(cwd, '/[^/]*$', '', '')
-  if lengthend == ''
-    let lengthend = '/'
-  endif
-  if cwd != lengthend
-    exec ":lcd " . lengthend
-  endif
-endfunction
-
-:nmap ,ld :call LengthenCWD()<cr>
-
-function! ShortenCWD()
-  let cwd = split(getcwd(), '/')
-  let filedir = split(expand("%:p:h"), '/')
-  let i = 0
-  let newdir = ""
-  while i < len(filedir)
-    let newdir = newdir . "/" . filedir[i]
-    if len(cwd) == i || filedir[i] != cwd[i]
-      break
-    endif
-    let i = i + 1
-  endwhile
-  exec ":lcd /" . newdir
-endfunction
-
-:nmap ,sd :call ShortenCWD()<cr>
-
-function! RedirToYankRegisterF(cmd, ...)
-  let cmd = a:cmd . " " . join(a:000, " ")
-  redir @*>
-  exe cmd
-  redir END
-endfunction
-
-command! -complete=command -nargs=+ RedirToYankRegister 
-      \ silent! call RedirToYankRegisterF(<f-args>)
-
-function! ToggleMinimap()
-  if exists("s:isMini") && s:isMini == 0
-    let s:isMini = 1
-  else
-    let s:isMini = 0
-  end
-
-  if (s:isMini == 0)
-    " save current visible lines
-    let s:firstLine = line("w0")
-    let s:lastLine = line("w$")
-
-    " make font small
-    exe "set guifont=" . g:small_font
-    " highlight lines which were visible
-    let s:lines = ""
-    for i in range(s:firstLine, s:lastLine)
-      let s:lines = s:lines . "\\%" . i . "l"
-
-      if i < s:lastLine
-        let s:lines = s:lines . "\\|"
-      endif
-    endfor
-
-    exe 'match Visible /' . s:lines . '/'
-    hi Visible guibg=lightblue guifg=black term=bold
-    nmap <s-j> 10j
-    nmap <s-k> 10k
-  else
-    exe "set guifont=" . g:main_font
-    hi clear Visible
-    nunmap <s-j>
-    nunmap <s-k>
-  endif
-endfunction
-
-command! ToggleMinimap call ToggleMinimap()
-
-" I /literally/ never use this and it's pissing me off
-" nnoremap <space> :ToggleMinimap<CR>
-
-"-----------------------------------------------------------------------------
-" Auto commands
-"-----------------------------------------------------------------------------
-augroup derek_xsd
-  au!
-  au BufEnter *.xsd,*.wsdl,*.xml setl tabstop=4 shiftwidth=4
-augroup END
-
-augroup Binary
-  au!
-  au BufReadPre   *.bin let &bin=1
-  au BufReadPost  *.bin if &bin | %!xxd
-  au BufReadPost  *.bin set filetype=xxd | endif
-  au BufWritePre  *.bin if &bin | %!xxd -r
-  au BufWritePre  *.bin endif
-  au BufWritePost *.bin if &bin | %!xxd
-  au BufWritePost *.bin set nomod | endif
-augroup END
-
-
-"-----------------------------------------------------------------------------
-" Fix constant spelling mistakes
-"-----------------------------------------------------------------------------
-
-iab #s    <snip>
-iab #a # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-iab YDATE =strftime ("%a %b %d %b %y")
-iab Taht       That
-iab taht       that
-iab Teh        The
-iab teh        the
-
-"-----------------------------------------------------------------------------
-" Set up the window colors and size
-"-----------------------------------------------------------------------------
-if has("gui_running")
-  exe "set guifont=" . g:main_font
-  colorscheme jellybeans
-  if !exists("g:vimrcloaded")
-    winpos 0 0
-    if !&diff
-      winsize 130 120
-    else
-      winsize 227 120
-    endif
-    let g:vimrcloaded = 1
-  endif
-endif
-:nohls
-
-
-"Barnaby stuff
-"-----------------------------------------------------------------------------
-autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
-
-set title
-
-
-"end
+" }}}
