@@ -31,7 +31,6 @@
 " Supporting code -------------------------------------------------------------
 " Preamble {{{
 
-set number
 
 filetype plugin indent on
 set tabstop=4
