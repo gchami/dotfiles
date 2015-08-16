@@ -43,7 +43,7 @@ if !has("gui_running") && &t_Co != 88 && &t_Co != 256
     finish
 endif
 
-set background=dark
+set background=light
 
 if exists("syntax_on")
     syntax reset
